@@ -1,5 +1,35 @@
 # flexibility-scheduling
 
+### Repository structure
+
+    ├── data            # data sets for forecasting, scheduling             
+    ├── I-EPOS          # flexibility coordination package in java
+    ├── R               # prosumer flexibility modeling in R
+    └── Simulation      # article experiment simulation in python
+
+### Data
+
+    **Carbon intensity** data is retrieved from https://data.nationalgrideso.com/carbon-intensity1/historic-generation-mix#
+    To get and pre-process the data:
+    wget https://data.nationalgrideso.com/backend/dataset/88313ae5-94e4-4ddc-a790-593554d8c6b9/resource/f93d1835-75bc-43e5-84ad-12472b180a98/download/df_fuel_ckan.csv -P ./data
+    python process_carbon_intensity.py
+
+    **Household net load** data is retrived from http://www.networkrevolution.co.uk/resources/project-data/
+    To get and pre-process the data:
+    wget http://www.networkrevolution.co.uk/go.php?id=409&link=TC5.zip -P ./data
+    wget http://www.networkrevolution.co.uk/go.php?id=409&link=TC2Auto.zip -P ./data
+
+    **Grid Frequency** data is retrieved from https://data.nationalgrideso.com/system/system-frequency-data
+    To get and pre-process the data:
+    curl -L https://data.nationalgrideso.com/backend/dataset/cb1cc925-ecd8-4406-b021-3a3f368196e1/resource/f0933bdd-1b0e-4dd3-aa7f-5498df1ba5b9/download/f-2019-1.zip
+    ...
+    curl -L https://data.nationalgrideso.com/backend/dataset/cb1cc925-ecd8-4406-b021-3a3f368196e1/resource/f0933bdd-1b0e-4dd3-aa7f-5498df1ba5b9/download/f-2019-12.zip
+
+### Simulation
+To run the experiment simulations:
+
+    python ./Simulation/battery_control.py
+
 ### Installation for Linux machine
     mkdir flexibility-scheduling
     cd flexibility-scheduling

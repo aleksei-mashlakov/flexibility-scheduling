@@ -1,22 +1,11 @@
-print('we are here')
-# ### Online battery validation
 
-# In[342]:
-
+## Online battery validation
 
 import os
 import glob
 import pandas as pd
-#import pandas as pd
 import numpy as np
-# import matplotlib.pyplot as plt
-# %matplotlib inline
-
 import pickle
-
-
-# In[425]:
-
 
 class BESS(object):
     def __init__(self, max_energy, max_power, init_soc_proc, efficiency):
@@ -25,12 +14,6 @@ class BESS(object):
         self.efficiency = efficiency
         self.energy = self.max_e_capacity * (self.soc)/100
         self.power = max_power
-
-    def online_control(self):
-        """
-        """
-
-        return
 
     def calculate_NLF(self, net_load_day):
         """ Net load factor
@@ -86,7 +69,6 @@ def load_from_pickle(name, save_path):
     return p
 
 
-
 import os
 import pandas as pd
 path = "."
@@ -98,7 +80,6 @@ c_reg = pd.read_csv(apath).loc[:,['c_reg_a{}'.format(1)]]
 #flex_down = pd.read_csv(apath).loc[:,['flex_down_a{}'.format(1)]]
 #flex_up = pd.read_csv(apath).loc[:,['flex_up_a{}'.format(1)]]
 
-
 apath = os.path.join(path, 'forecasts', bess_name, 'min_power_forecast.csv')
 min_efr_forecast = pd.read_csv(apath, sep=",")
 min_efr_forecast[min_efr_forecast<0] = 0
@@ -107,15 +88,10 @@ apath = os.path.join(path, 'forecasts', bess_name, 'max_power_forecast.csv')
 max_efr_forecast = pd.read_csv(apath, sep=",")
 max_efr_forecast[max_efr_forecast<0] = 0
 
-
 net_load_path = '.'
 apath = os.path.join(net_load_path,'whole home power import 1 min 12 months averaged.csv')
 net_load_true = pd.read_csv(apath, index_col=['timestamp'], parse_dates=True)
 net_load_true = net_load_true[net_load_true.iloc[0:100*60*24+1,:].index[-1]:]
-
-
-# In[51]:
-
 
 # project_address = r"C:\Users\h17353\PycharmProjects\Frequency\frequency_measurements\GB"
 if bess_name == 'sonnen':
@@ -127,9 +103,6 @@ efr_true = pd.read_csv(apath, sep=",", parse_dates=['dtm'],infer_datetime_format
                              na_values=['nan', '?'], index_col='dtm', dayfirst=True)
 efr_true = efr_true['2019-04-11 00:00:00':]
 
-
-# In[511]:
-
 priority = 'schedule' #'efr' #
 dataset_folder = '.'
 sim_path = "."
@@ -140,7 +113,6 @@ len_days = 150
 HH=48
 M=30
 T=60
-
 
 ## Initialize list of dataframes
 dfs_SPM = pd.DataFrame(index=range(HH), columns=range(1,len_days+1,1))
@@ -162,7 +134,6 @@ df_NLF_agg_frcst = pd.DataFrame(columns=range(1,len_days+1,1))
 dfs_real_NLF = pd.DataFrame(index=range(1,len_days+1,1), columns=range(len_agents))
 dfs_frcst_NLF = pd.DataFrame(index=range(1,len_days+1,1), columns=range(len_agents))
 df_agg_imb = pd.DataFrame(index=range(HH), columns=range(1,len_days+1,1))
-
 
 dfs_daily_nl_imb = pd.DataFrame(index=range(1,len_days+1,1), columns=range(len_agents))
 dfs_daily_bat_imb = pd.DataFrame(index=range(1,len_days+1,1), columns=range(len_agents))
@@ -447,4 +418,3 @@ save_to_pickle('nl_imb_std', dfs_nl_imb_std, save_path)
 save_to_pickle('dfs_daily_nl_imb', dfs_daily_nl_imb, save_path)
 save_to_pickle('dfs_daily_bat_imb', dfs_daily_bat_imb, save_path)
 save_to_pickle('dfs_daily_frcst_imb', dfs_daily_frcst_imb, save_path)
-
