@@ -8,13 +8,13 @@
     sudo apt install unzip
     sudo apt install openjdk-11-jre-default
 
-    <!--- to simply run jar: --->
+<!--- to simply run jar: --->
     java -jar IEPOS-Tutorial.jar
     !the folder name should not contain gaps
-    <!--- add Class-Path: . to MANIFEST file in IEPOS-Tutorial.jar (not necessary true) --->
+<!--- add Class-Path: . to MANIFEST file in IEPOS-Tutorial.jar (not necessary true) --->
     sudo chmod -x /prepare.sh
     sudo chmod -x /run_test.sh
-    <!--- then use where 1 -- is an index of start dataset and 64 -- end dataset --->
+<!--- then use where 1 -- is an index of start dataset and 64 -- end dataset --->
     ./prepare.sh 1 64
 
     <!--- To install R --->
