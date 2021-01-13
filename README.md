@@ -1,4 +1,19 @@
-# flexibility-scheduling
+# Prosumer flexibility scheduling
+
+The codes and data provided here are used for the experiment simulations described in:
+
+```
+@article{mashlakov2021decentral,
+  title={Decentralized cooperative scheduling of prosumer flexibility under forecast uncertainty},
+  author={Mashlakov, Aleksei and Pournaras, Evangelos and Nardelli, Pedro H.J. and Honkapuro, Samuli},
+  journal={},
+  volume={},
+  number={},
+  pages={},
+  year={2021},
+  publisher={}
+}
+```
 
 ### Repository structure
 
