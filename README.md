@@ -15,15 +15,15 @@ The codes and data provided here are used for the experiment simulations describ
 }
 ```
 
-### Repository structure
+## Repository structure
 <!--toc-->
-    ├── [Data](#data)              # data sets for forecasting, scheduling             
-    ├── [I-EPOS](#i-epos)          # flexibility coordination package in java
-    ├── [R](#r)                    # prosumer flexibility modeling in R
-    └── [Simulation](#simulation)  # article experiment simulation in python
+ - [Data sets for forecasting and scheduling](#data)                    
+ - [Prosumer flexibility modeling in R](#r)        
+ - [Flexibility coordination package in java](#i-epos)    
+ - [Article simulation in python](#simulation) 
 <!--toc_end-->
 
-### Data
+## Data
 
     **Carbon intensity** data is retrieved from https://data.nationalgrideso.com/carbon-intensity1/historic-generation-mix#
     To get and pre-process the data:
@@ -41,12 +41,16 @@ The codes and data provided here are used for the experiment simulations describ
     ...
     curl -L https://data.nationalgrideso.com/backend/dataset/cb1cc925-ecd8-4406-b021-3a3f368196e1/resource/f0933bdd-1b0e-4dd3-aa7f-5498df1ba5b9/download/f-2019-12.zip
 
+## R
+
+## I-EPOS
+
 ### Simulation
 To run the experiment simulations:
 
     python ./Simulation/battery_control.py
 
-### Installation for Linux machine
+#### Installation for Linux machine
     mkdir flexibility-scheduling
     cd flexibility-scheduling
     git clone https://github.com/aleksei-mashlakov/flexibility-scheduling.git .
