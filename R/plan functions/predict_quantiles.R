@@ -6,32 +6,32 @@ predict_quantiles <- function(df, horizon, out_of_sample, T, window_size, refit,
   "
   numCores <- parallel::detectCores()
   print(numCores)
-  doParallel::registerDoParallel(numCores) 
-  
+  doParallel::registerDoParallel(numCores)
+
   #numCores <- parallel::detectCores()
   #print(numCores)
   #cl <- parallel::makeCluster(numCores)
   #doParallel::registerDoParallel(cl)
-  
+
   foreach(col_idx=1:dim(df)[2], .export=c("predict_garch", "get_mu", "get_cov", "rmse"),
-                                .packages=c("foreach","doParallel","xts","LaplacesDemon","rmgarch","rugarch")) %dopar% { 
+                                .packages=c("foreach","doParallel","xts","LaplacesDemon","rmgarch","rugarch")) %dopar% {
     # export=ls(envir=globalenv())
     colname <- colnames(df)[col_idx]
     print(colname)
-    
+
     "Create dataframe for column"
     m <- matrix(df[[colname]], byrow = TRUE, nrow = nrow(df)/T, ncol = T)
     rX = as.data.frame(m)
     rX['t'] <- seq(as.Date("2013-01-01 00:00:00"), by = "day", length.out = nrow(df)/T)
     rX = xts::xts(rX[, 1:T], order.by=as.Date(rX$t, format = "%Y-%m-%d", tz = "UTC"))
-    
+
     "Predict using GARCH"
     dccrl <- predict_garch(rX, horizon, out_of_sample, T, window_size, refit)
     mu_matrix <- get_mu(dccrl, T)
     H_list <- get_cov(dccrl, T)
     m_real <- m[(window_size+1):dim(m)[1],]
     print(rmse(c(m_real)-c(mu_matrix)))
-    
+
     "Create quantiles"
     #quantiles <- seq(from=0.05, to=0.95, by=0.1)
     quantiles <- seq(from=0.95, to=0.05, by=-0.05)
@@ -42,12 +42,12 @@ predict_quantiles <- function(df, horizon, out_of_sample, T, window_size, refit,
       #mu <- matrix(c(rep.int(0,T)), nrow = T, ncol = 1, byrow = TRUE)
       X <- LaplacesDemon::rmvnc(N_scenarios, mu_matrix[i,], U)
       for (a in 1:length(quantiles)){
-        m_quantiles[((i-1)*T+1):((i-1)*T+T),a] <- qnorm(p=quantiles[a], 
-                                                        mean=colMeans(X), 
+        m_quantiles[((i-1)*T+1):((i-1)*T+T),a] <- qnorm(p=quantiles[a],
+                                                        mean=colMeans(X),
                                                         sd=c(apply(X, 2, sd)))
-        
-        # m_quantiles[((i-1)*T+1):((i-1)*T+T),a] <- qnorm(p=quantiles[a], 
-        #                                                 mean=mu_matrix[i,], 
+
+        # m_quantiles[((i-1)*T+1):((i-1)*T+T),a] <- qnorm(p=quantiles[a],
+        #                                                 mean=mu_matrix[i,],
         #                                                 sd=diag(chol(H_list[[i]][,,1])))
       }
     }

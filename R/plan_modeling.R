@@ -8,7 +8,7 @@ old_wd <- getwd()
 set.seed(1)
 
 ## Install GUROBI R-package
-install.packages("C:/gurobi902/win64/R/gurobi_9.0-2.zip", repos = NULL)
+#install.packages("C:/gurobi902/win64/R/gurobi_9.0-2.zip", repos = NULL)
 
 # only needed in case you have not yet installed these packages
 install.packages(c("CVXR","matrixStats", "foreach", "doParallel"), quiet=TRUE)
@@ -16,7 +16,7 @@ install.packages(c("CVXR","matrixStats", "foreach", "doParallel"), quiet=TRUE)
 ## Packages used
 library(CVXR, quietly=TRUE)
 library(matrixStats, quietly=TRUE)
-library(gurobi, quietly=TRUE)
+#library(gurobi, quietly=TRUE)
 library(foreach, quietly=TRUE)
 library(doParallel, quietly=TRUE)
 
@@ -24,10 +24,10 @@ library(doParallel, quietly=TRUE)
 CVXR::installed_solvers()
 
 ## Source functions
-sapply(dir("plan functions",full.names=TRUE), source)
+sapply(dir("./R/plan functions",full.names=TRUE), source)
 
 ## Load the net-load data names
-df_load <- read.csv("load colnames.csv", header=TRUE, row.names="X")
+df_load <- read.csv("./datasets/load colnames.csv", header=TRUE, row.names="X")
 
 bess <- "sonnen"
 save_plans_dir <- file.path(getwd(),sprintf("plans_%s", bess))
@@ -95,10 +95,12 @@ numCores <- detectCores()
 numCores
 registerDoParallel(numCores)  # use multicore, set to the number of our cores
 
-foreach (col_idx=1:dim(df_load)[2]) %dopar% {
+foreach (col_idx=1:1) %dopar% {
+#foreach (col_idx=1:dim(df_load)[2]) %dopar% {
   user <- colnames(df_load)[col_idx]
   df_load_q <- read.csv(sprintf("./forecasts/%s_forecast.csv", user), header=TRUE)
-  for (day in 101:150){ #(dim(df_load_q)/T)[1]){
+  for (day in 1:1){
+  #for (day in 1:(dim(df_load_q)/T)[1]){
     print(c('User', col_idx, 'Day', day))
     dir.create(file.path(save_plans_dir, sprintf('%d',day)))
     user_results_iepos <- matrix(, nrow = (T+1), ncol = length(quantiles))
@@ -207,7 +209,7 @@ foreach (col_idx=1:dim(df_load)[2]) %dopar% {
         }
         prob <- Problem(Minimize(weighted_sum(objectives, weights[i,])), constr)
 
-        result <- solve(prob, solver = "GUROBI", verbose = FALSE, feastol = 1e-6, num_iter = Inf) #, feastol = 1e-6, num_iter = Inf)
+        result <- solve(prob, solver = "SCS", verbose = FALSE, feastol = 1e-6, num_iter = Inf) #, feastol = 1e-6, num_iter = Inf)
         ### Fill in the objectives values
         result_data[i,1] <- ( ## ToU
                               t(ptou)%*%(result$getValue(nl_pos)-result$getValue(c_reg_share)*((Q_reg_delta_down_day-Q_reg_delta_up_day)/dt))*dt +
@@ -230,7 +232,7 @@ foreach (col_idx=1:dim(df_load)[2]) %dopar% {
       }
 
       prob <- Problem(Minimize(weighted_sum(norm_objectives, c(rep(1,n_obj)))), const_fcr)
-      result <- solve(prob, solver = "GUROBI", verbose = FALSE, feastol = 1e-6, num_iter = Inf)
+      result <- solve(prob, solver = "SCS", verbose = FALSE, feastol = 1e-6, num_iter = Inf)
 
       gresult_data <- matrix(, nrow = 3, ncol = 1)
       gresult_data[1] <- (## ToU

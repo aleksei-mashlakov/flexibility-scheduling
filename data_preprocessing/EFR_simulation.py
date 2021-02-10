@@ -128,15 +128,10 @@ class BESS(object):
         return round(self.soc, 9), round(power, 6), round(power_LE, 6), round(power_UE, 6)
 
     def activate(self, filename, year):
-        if year==2014:
-            df = pd.read_csv(filename, sep=",", parse_dates=['dtm'],
-                             infer_datetime_format=True,
-                             na_values=['nan', '?'], index_col='dtm', dayfirst=True)
-        else:
-            df = pd.read_csv(filename, sep=",", parse_dates=['dtm'],
-                             infer_datetime_format=True,
-                             na_values=['nan', '?'], index_col='dtm', dayfirst=True,
-                             date_parser=lambda x: pd.to_datetime(x.rsplit(' ', 1)[0]))
+        df = pd.read_csv(filename, sep=",", parse_dates=['dtm'],
+                         infer_datetime_format=True,
+                         na_values=['nan', '?'], index_col='dtm', dayfirst=True,
+                         date_parser=lambda x: pd.to_datetime(x.rsplit(' ', 1)[0]))
 
         df.rename(columns={​​​​​​​​'f': 'frequency'}​​​​​​​​, inplace=True)
         df['frequency'].replace('N/A', np.nan, inplace=True)
@@ -160,56 +155,60 @@ class BESS(object):
         print(df.head())
         return df
 
-years_list = [2019]
-repository_address = r"./data"
-project_address = r"./data"
-delta_time = '30T'#'15T'
+if __name__ == '__main__':
+    years_list = [2019]
+    repository_address = r"./datasets"
+    project_address = r"./datasets"
+    delta_time = '30T'#'15T'
 
-def get_date_indexes(start_year):
-    date_list = []
-    for i in range(1,13):
-        date_list.append(str(start_year)+' '+str(i))
-    return date_list
+    def get_date_indexes(start_year):
+        date_list = []
+        for i in range(1,13):
+            date_list.append(str(start_year)+' '+str(i))
+        return date_list
 
-# prepare data
-dfList_1s_y=[]
-dfList_30m_y=[]
-bess = BESS(7.5*0.9, 3.3, 0.0, 0.93)
-# bess = BESS(13.5, 3.68, 0.0, 0.95)
-for year in years_list:
-    dfList_1s = []
-    dfList_30m = []
-    print(year)
-    for month in get_date_indexes(year):
-        print(month)
-        filename = glob.glob(os.path.join(repository_address, str(year), month, 'f '+month+'.csv'))[0]
-        df = bess.activate(filename, year)
-        df['soc_up'] = df['soc']
-        df['soc_up'][df['soc_up']>=0] = 0
-        df['soc_down'] = df['soc']
-        df['soc_down'][df['soc_down']<=0] = 0
-        df2 = df['soc_up'].resample(delta_time).sum()
-        df3 = df['soc_down'].resample(delta_time).sum()
-        df5 = df[['power']].rename(columns={​​​​​​​​'power':'max_power'}​​​​​​​​).resample(delta_time).max()
-        df6 = df[['power']].rename(columns={​​​​​​​​'power':'min_power'}​​​​​​​​).resample(delta_time).min()
-        df3 = pd.concat([df2, df3, df5, df6], axis=1).fillna(method='ffill')
-        dfList_1s.append(df.drop(['frequency','soc','soc_up','soc_down'], axis=1))
-        dfList_30m.append(df3)
+    # prepare data
+    dfList_1s_y=[]
+    dfList_30m_y=[]
+    bess_name = 'sonnenEco75'
+    if bess_name== 'sonnenEco75':
+        bess = BESS(7.5*0.9, 3.3, 0.0, 0.93) # sonnen
+    elif bess_name=="tesla135":
+        bess = BESS(13.5, 3.68, 0.0, 0.95) # tesla
+    for year in years_list:
+        dfList_1s = []
+        dfList_30m = []
+        print(year)
+        for month in get_date_indexes(year):
+            print(month)
+            filename = glob.glob(os.path.join(repository_address, str(year), month, 'f '+month+'.csv'))[0]
+            df = bess.activate(filename, year)
+            df['soc_up'] = df['soc']
+            df['soc_up'][df['soc_up']>=0] = 0
+            df['soc_down'] = df['soc']
+            df['soc_down'][df['soc_down']<=0] = 0
+            df2 = df['soc_up'].resample(delta_time).sum()
+            df3 = df['soc_down'].resample(delta_time).sum()
+            df5 = df[['power']].rename(columns={​​​​​​​​'power':'max_power'}​​​​​​​​).resample(delta_time).max()
+            df6 = df[['power']].rename(columns={​​​​​​​​'power':'min_power'}​​​​​​​​).resample(delta_time).min()
+            df3 = pd.concat([df2, df3, df5, df6], axis=1).fillna(method='ffill')
+            dfList_1s.append(df.drop(['frequency','soc','soc_up','soc_down'], axis=1))
+            dfList_30m.append(df3)
 
-        with open('./1s_sim.pkl', 'wb') as b:
-            pickle.dump(dfList_1s,b)
-        with open('./30m_sim.pkl', 'wb') as b:
-            pickle.dump(dfList_30m,b)
+            # with open('./datasets/1s_sim.pkl', 'wb') as b:
+            #     pickle.dump(dfList_1s,b)
+            # with open('./datasets/30m_sim.pkl', 'wb') as b:
+            #     pickle.dump(dfList_30m,b)
 
-    concatDf_1s = pd.concat(dfList_1s, axis=0)
-    concatDf_30m = pd.concat(dfList_30m, axis=0)
-    dfList_1s_y.append(concatDf_1s)
-    dfList_30m_y.append(concatDf_30m)
+        concatDf_1s = pd.concat(dfList_1s, axis=0)
+        concatDf_30m = pd.concat(dfList_30m, axis=0)
+        dfList_1s_y.append(concatDf_1s)
+        dfList_30m_y.append(concatDf_30m)
 
 
-concatDf_1s = pd.concat(dfList_1s_y, axis=0)
-concatDf_30m = pd.concat(dfList_30m_y, axis=0)
-savefile_1s = os.path.join(repository_address, 'GB-EFR-1-s-2019-tesla135.csv')
-savefile_30m = os.path.join(repository_address, 'GB-EFR-30-m-2019-tesla135.csv')
-concatDf_1s.to_csv(savefile_1s, sep=',', encoding='utf-8', header='column_names')
-concatDf_30m.to_csv(savefile_30m, sep=',', encoding='utf-8', header='column_names')
+    concatDf_1s = pd.concat(dfList_1s_y, axis=0)
+    concatDf_30m = pd.concat(dfList_30m_y, axis=0)
+    savefile_1s = os.path.join(repository_address, "GB-EFR-1-s-2019-{}.csv".format(bess_name))
+    savefile_30m = os.path.join(repository_address, "GB-EFR-30-m-2019-{}.csv".format(bess_name))
+    concatDf_1s.to_csv(savefile_1s, sep=',', encoding='utf-8', header='column_names')
+    concatDf_30m.to_csv(savefile_30m, sep=',', encoding='utf-8', header='column_names')
