@@ -5,7 +5,7 @@ The codes and data provided here are used for the experiment simulations describ
 ```
 @article{mashlakov2021decentral,
   title={Decentralized cooperative scheduling of prosumer flexibility under forecast uncertainty},
-  author={Mashlakov, Aleksei and Pournaras, Evangelos and Nardelli, Pedro H.J. and Honkapuro, Samuli},
+  author={Mashlakov, A., Pournaras, E., Nardelli, P.H.J., and Honkapuro, S.},
   journal={},
   volume={},
   number={},
@@ -16,11 +16,12 @@ The codes and data provided here are used for the experiment simulations describ
 ```
 
 ### Repository structure
-
-    ├── data            # data sets for forecasting, scheduling             
-    ├── I-EPOS          # flexibility coordination package in java
-    ├── R               # prosumer flexibility modeling in R
-    └── Simulation      # article experiment simulation in python
+<!--toc-->
+    ├── [Data](#data)              # data sets for forecasting, scheduling             
+    ├── [I-EPOS](#i-epos)          # flexibility coordination package in java
+    ├── [R](#r)                    # prosumer flexibility modeling in R
+    └── [Simulation](#simulation)  # article experiment simulation in python
+<!--toc_end-->
 
 ### Data
 
