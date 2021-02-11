@@ -8,12 +8,12 @@ set.seed(1)
 ## Packages used
 ## only needed in case you have not yet installed these packages
 #update.packages(checkBuilt=TRUE, ask=FALSE)
-library.path <- .libPaths()
-
+library.path <- .libPaths()[1]
+Sys.getenv("R_LIBS_USER")
 print(library.path)
 #install.packages(c("rugarch","rmgarch","xts","lubridate","LaplacesDemon","foreach", "doParallel"))#, dependencies = TRUE)
-library(rugarch, quietly=TRUE, lib.loc = library.path)
-library(rmgarch, quietly=TRUE,lib.loc = library.path)
+library(rugarch, quietly=TRUE,lib="/usr/lib/R/library")
+library(rmgarch, quietly=TRUE,lib="/usr/lib/R/library")
 library(xts, quietly=TRUE,lib.loc = library.path)
 library(lubridate, quietly=TRUE, lib.loc = library.path)
 library(LaplacesDemon, quietly=TRUE, lib.loc = library.path)

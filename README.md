@@ -33,7 +33,7 @@ The codes and data provided here are used for the experiment simulations describ
 
 **Carbon intensity** data is fetched from [National Grid ESO](https://data.nationalgrideso.com/carbon-intensity1/historic-generation-mix)
 
-To get the data:
+To get the carbon intensity data:
 
     $ wget https://data.nationalgrideso.com/backend/dataset/88313ae5-94e4-4ddc-a790-593554d8c6b9/resource/f93d1835-75bc-43e5-84ad-12472b180a98/download/df_fuel_ckan.csv -P ./datasets
 
@@ -43,7 +43,7 @@ The preprocessing was done using:
 
 **Household net load** data is fetched from [Network Revolution](http://www.networkrevolution.co.uk/resources/project-data/) project
 
-To get the data:
+To get the net load data:
 
     $ wget http://www.networkrevolution.co.uk/go.php?id=409&link=TC5.zip -P ./datasets
     $ wget http://www.networkrevolution.co.uk/go.php?id=409&link=TC2Auto.zip -P ./datasets
@@ -55,7 +55,7 @@ The preprocessing was done using:
 
 **Grid Frequency** data is fetched from [National Grid ESO](https://data.nationalgrideso.com/system/system-frequency-data)
 
-To get the data:
+To get the frequency data for year 2019:
 
     $ bash ./datasets/get_frequency.sh
 
@@ -86,9 +86,9 @@ Get and activate academic license. Check instructions from [here](https://cran.r
 Consider [this](https://stackoverflow.com/questions/44007425/gurobi-package-does-not-load-in-ubuntu-14-04-error-in-dyn-loadfile-dllpath) to run Gurobi in R.
 Users of the bash shell should add the following lines to their .bashrc files in /etc/bash:
 
-    export GUROBI_HOME="/opt/gurobi902/linux64"
-    export PATH="${PATH}:${GUROBI_HOME}/bin"
-    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
+    $ export GUROBI_HOME="/opt/gurobi902/linux64"
+    $ export PATH="${PATH}:${GUROBI_HOME}/bin"
+    $ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
 
 **3. Installed nohub**
 
@@ -115,98 +115,51 @@ Forecasts quantiles for carbon intensity, household net load, and battery grid f
 
     $ sudo apt install openjdk-11-jre-default
 
-**2. Installed I-EPOS**
+**2. Installed I-EPOS** (it is already in the repository but the full instructions below)
+
+To run 1 day example of flexibility coordination. For the rest days you need to run **Flexibility modeling** and place the results in ./I-EPOS/datasets.
+
+    $ cd ./I-EPOS
+    $ ./prepare.sh 1 1
+
+Full I-EPOS instructions below:
 
     $ wget https://github.com/epournaras/EPOS/releases/download/0.0.2/Release-0.0.2.zip -P ./I-EPOS/
     $ sudo apt install unzip
     $ unzip ./I-EPOS/Release-0.0.2.zip -d ./I-EPOS/
+    $ rm -rf ./I-EPOS/Release-0.0.2.zip
+    $ unzip ./I-EPOS/Release-0.0.2.zip -d ./I-EPOS/ && mv ./I-EPOS/Release-0.0.2/* ./I-EPOS/ && rm -rf ./I-EPOS/Release-0.0.2*
+    $ mv ./datasets/1/ ./I-EPOS/datasets/1
+    $ change number of agent to 150 and  ./I-EPOS/conf  
+    $ change ./I-EPOS/conf/epos.properties file
+    ...............................
+    ### Dataset ###
+    #The folder name in the datasets path. Make sure it has no spaces, tabs or newlines (alphanum and underscore preferred)
+    dataset=1
 
-    <!--- to simply run jar: --->
-        java -jar IEPOS-Tutorial.jar
-        !the folder name should not contain gaps
-    <!--- add Class-Path: . to MANIFEST file in IEPOS-Tutorial.jar (not necessary true) --->
-        sudo chmod -x /prepare.sh
-        sudo chmod -x /run_test.sh
-    <!--- then use where 1 -- is an index of start dataset and 64 -- end dataset --->
-        ./prepare.sh 1 64
 
+    ### Basic epos properties ###
+    # any integer > 0
+    numSimulations=50
 
+    # any integer > 0
+    numIterations=30
+
+    # any integer > 0
+    numAgents=150
+
+    # any integer > 0
+    numPlans=19
+
+    # any integer > 0
+    numChildren=2
+
+    # exact dimensionality from the dataset
+    planDim=48
+    ..................................
 
 ## Battery control simulation
-To run the experiment simulations:
 
-    python ./Simulation/battery_control.py
+The battery control simulations were conducted with the following file:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!--- To install R --->
-    https://blog.zenggyu.com/en/post/2018-01-29/installing-r-r-packages-e-g-tidyverse-and-rstudio-on-ubuntu-linux/
-
-    sudo apt-get install libeigen3-dev
-    sudo apt-get install libmpfr-dev
-    sudo apt-get install r-cran-rcppeigen
-
-    <!--- To run Gurobi in linux --->
-    tar xvfz gurobi9.0.2_linux64.tar.gz
-
-    <!--- Users of the bash shell should add the following lines to their .bashrc files in /etc/bash: --->
-
-    export GUROBI_HOME="/opt/gurobi902/linux64"
-    export PATH="${PATH}:${GUROBI_HOME}/bin"
-    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
-
-    grbgetkey 68cfaeda-acf0-11ea-8319-0a7c4f30bdbe
-    sudo mv gurobi.lic /opt/gurobi902/linux64
-    # check gurobi_cl
-
-    <!--- To run Gurobi in R:  https://stackoverflow.com/questions/44007425/gurobi-package-does-not-load-in-ubuntu-14-04-error-in-dyn-loadfile-dllpath --->
-    cd /etc/ld.so.conf.d
-    sudo nano x86_64-linux-gnu.conf
-    ## add /opt/gurobi902/linux64/lib
-    sudo ldconfig
-    nohup Rscript ./script.R &
-
-<!--- also consider --->
-
-1.Add library path for R: Edit etc/R/ldpaths - open as sudo and add the following:
-
-    : ${R_LD_LIBRARY_PATH=${GUROBI_HOME}/lib}
-
-    #############################
-    : ${R_LD_LIBRARY_PATH=${GUROBI_HOME}/lib}                -- this?
-    : ${JAVA_HOME=/usr/lib/jvm/default-java}
-    : ${R_JAVA_LD_LIBRARY_PATH=${JAVA_HOME}/lib/server}
-    if test -n "/usr/lib/x86_64-linux-gnu"; then
-    : ${R_LD_LIBRARY_PATH=${GUROBI_HOME}/lib}                -- this?
-
-
-ALSO! Need to add a file in the directory etc/profile.d. Create file with the following text in it:
-
-    export GUROBI_HOME="/opt/gurobi902/linux64"
-    export PATH="${PATH}:${GUROBI_HOME}/bin"
-    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
-
-and save as "gurobi902.sh" in that directory.
+    $ python ./Simulation/battery_control.py

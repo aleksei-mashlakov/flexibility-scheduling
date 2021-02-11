@@ -19,11 +19,6 @@ Ubuntu 18:
     $ sudo apt-get update
     $ sudo apt-get install r-base
 
-
-    $ sudo apt-get install libeigen3-dev
-    $ sudo apt-get install libmpfr-dev
-    $ sudo apt-get install r-cran-rcppeigen
-
 **2. (Optional) Installed Gurobi optimizer**
 
 Gurobi speeds up the simulation but for the simple example we use the other solver.

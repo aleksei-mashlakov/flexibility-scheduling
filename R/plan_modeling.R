@@ -14,11 +14,11 @@ set.seed(1)
 install.packages(c("CVXR","matrixStats", "foreach", "doParallel"), quiet=TRUE)
 
 ## Packages used
-library(CVXR, quietly=TRUE)
-library(matrixStats, quietly=TRUE)
-#library(gurobi, quietly=TRUE)
-library(foreach, quietly=TRUE)
-library(doParallel, quietly=TRUE)
+library("CVXR", quietly=TRUE)
+library("matrixStats", quietly=TRUE)
+#library("gurobi", quietly=TRUE)
+library("foreach", quietly=TRUE)
+library("doParallel", quietly=TRUE)
 
 ## validate the installation
 CVXR::installed_solvers()
@@ -90,13 +90,13 @@ df_soc_down_q <- read.csv(file.path(soc_dir, sprintf("%s_forecast.csv", 'soc_dow
 df_pmax_q <- read.csv(file.path(soc_dir, sprintf("%s_forecast.csv", 'max_power')), header=TRUE)
 df_pmin_q <- read.csv(file.path(soc_dir, sprintf("%s_forecast.csv", 'min_power')), header=TRUE)
 
-
-numCores <- detectCores()
-numCores
-registerDoParallel(numCores)  # use multicore, set to the number of our cores
-
-foreach (col_idx=1:1) %dopar% {
+# uncomment to use multiple cores
+#numCores <- detectCores()
+#numCores
+#registerDoParallel(numCores)  # use multicore, set to the number of our cores
 #foreach (col_idx=1:dim(df_load)[2]) %dopar% {
+
+foreach (col_idx=1:1){
   user <- colnames(df_load)[col_idx]
   df_load_q <- read.csv(sprintf("./forecasts/%s_forecast.csv", user), header=TRUE)
   for (day in 1:1){
@@ -293,5 +293,6 @@ foreach (col_idx=1:1) %dopar% {
     #print(getwd())
   }
 }
+# uncomment to use multiple cores
 # When you're done, clean up the cluster
-stopImplicitCluster()
+#stopImplicitCluster()

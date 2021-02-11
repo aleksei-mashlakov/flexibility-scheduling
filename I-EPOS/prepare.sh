@@ -9,6 +9,7 @@
 #     - 'bicycle'  -> requires command line argument 1
 #	    - 'energy'   -> requires command line argument 2
 
+# use batches when simulating for large number of days
 batch_size=8 #$((nproc --all))
 echo "Batch size is "$batch_size
 dataset_ids_start=$1
@@ -116,6 +117,6 @@ run_batches(){
 get_current_path
 make_and_fill_directories
 make_dataset_symbolic_links
-run_batches
-#run_all
+#run_batches
+run_all
 echo "Done&Done."
