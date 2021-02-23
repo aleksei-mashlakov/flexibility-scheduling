@@ -6,12 +6,12 @@ The codes and data provided here are used for the experiment simulations describ
 @article{mashlakov2021decentral,
   title={Decentralized cooperative scheduling of prosumer flexibility under forecast uncertainty},
   author={Mashlakov, A., Pournaras, E., Nardelli, P.H.J., and Honkapuro, S.},
-  journal={},
+  journal={Applied Energy},
   volume={},
   number={},
   pages={},
   year={2021},
-  publisher={}
+  publisher={Elsevier}
 }
 ```
 
