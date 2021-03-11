@@ -7,9 +7,8 @@ The codes and data provided here are used for the experiment simulations describ
   title={Decentralized cooperative scheduling of prosumer flexibility under forecast uncertainty},
   author={Mashlakov, A., Pournaras, E., Nardelli, P.H.J., and Honkapuro, S.},
   journal={Applied Energy},
-  volume={},
-  number={},
-  pages={},
+  volume={290},
+  pages={116706},
   year={2021},
   publisher={Elsevier}
 }
